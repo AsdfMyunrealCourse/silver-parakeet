@@ -12,7 +12,7 @@ UCLASS()
 class FPS_API APatrolingGuard : public ATP_ThirdPersonCharacter
 {
 	GENERATED_BODY()
-
+public: //TODO remove or create Get
 		UPROPERTY(EditInstanceOnly, Category = "Patrol Route")
 		TArray<AActor*> PatrolPoints;
 	
