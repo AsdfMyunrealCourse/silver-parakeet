@@ -3,7 +3,7 @@
 #include "FPS.h"
 #include "FPSGameMode.h"
 #include "FPSHUD.h"
-#include "FPSCharacter.h"
+#include "Player/FirstPersonCharacter.h"
 
 AFPSGameMode::AFPSGameMode()
 	: Super()

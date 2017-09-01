@@ -1,7 +1,7 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 
 #include "FPS.h"
-#include "FPSCharacter.h"
+#include "FirstPersonCharacter.h"
 #include "FPSProjectile.h"
 #include "Animation/AnimInstance.h"
 #include "GameFramework/InputSettings.h"
@@ -11,9 +11,9 @@
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
 //////////////////////////////////////////////////////////////////////////
-// AFPSCharacter
+// AFirstPersonCharacter
 
-AFPSCharacter::AFPSCharacter()
+AFirstPersonCharacter::AFirstPersonCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
@@ -80,7 +80,7 @@ AFPSCharacter::AFPSCharacter()
 	//bUsingMotionControllers = true;
 }
 
-void AFPSCharacter::BeginPlay()
+void AFirstPersonCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
@@ -104,7 +104,7 @@ void AFPSCharacter::BeginPlay()
 //////////////////////////////////////////////////////////////////////////
 // Input
 
-void AFPSCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+void AFirstPersonCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	// set up gameplay key bindings
 	check(PlayerInputComponent);
@@ -112,27 +112,27 @@ void AFPSCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
-	//InputComponent->BindTouch(EInputEvent::IE_Pressed, this, &AFPSCharacter::TouchStarted);
+	//InputComponent->BindTouch(EInputEvent::IE_Pressed, this, &AFirstPersonCharacter::TouchStarted);
 	if (EnableTouchscreenMovement(PlayerInputComponent) == false)
 	{
-		PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AFPSCharacter::OnFire);
+		PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AFirstPersonCharacter::OnFire);
 	}
 
-	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AFPSCharacter::OnResetVR);
+	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AFirstPersonCharacter::OnResetVR);
 
-	PlayerInputComponent->BindAxis("MoveForward", this, &AFPSCharacter::MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &AFPSCharacter::MoveRight);
+	PlayerInputComponent->BindAxis("MoveForward", this, &AFirstPersonCharacter::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &AFirstPersonCharacter::MoveRight);
 
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
 	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
-	PlayerInputComponent->BindAxis("TurnRate", this, &AFPSCharacter::TurnAtRate);
+	PlayerInputComponent->BindAxis("TurnRate", this, &AFirstPersonCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
-	PlayerInputComponent->BindAxis("LookUpRate", this, &AFPSCharacter::LookUpAtRate);
+	PlayerInputComponent->BindAxis("LookUpRate", this, &AFirstPersonCharacter::LookUpAtRate);
 }
 
-void AFPSCharacter::OnFire()
+void AFirstPersonCharacter::OnFire()
 {
 	// try and fire a projectile
 	if (ProjectileClass != NULL)
@@ -176,12 +176,12 @@ void AFPSCharacter::OnFire()
 	}
 }
 
-void AFPSCharacter::OnResetVR()
+void AFirstPersonCharacter::OnResetVR()
 {
 	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
 }
 
-void AFPSCharacter::BeginTouch(const ETouchIndex::Type FingerIndex, const FVector Location)
+void AFirstPersonCharacter::BeginTouch(const ETouchIndex::Type FingerIndex, const FVector Location)
 {
 	if (TouchItem.bIsPressed == true)
 	{
@@ -193,7 +193,7 @@ void AFPSCharacter::BeginTouch(const ETouchIndex::Type FingerIndex, const FVecto
 	TouchItem.bMoved = false;
 }
 
-void AFPSCharacter::EndTouch(const ETouchIndex::Type FingerIndex, const FVector Location)
+void AFirstPersonCharacter::EndTouch(const ETouchIndex::Type FingerIndex, const FVector Location)
 {
 	if (TouchItem.bIsPressed == false)
 	{
@@ -206,7 +206,7 @@ void AFPSCharacter::EndTouch(const ETouchIndex::Type FingerIndex, const FVector 
 	TouchItem.bIsPressed = false;
 }
 
-void AFPSCharacter::TouchUpdate(const ETouchIndex::Type FingerIndex, const FVector Location)
+void AFirstPersonCharacter::TouchUpdate(const ETouchIndex::Type FingerIndex, const FVector Location)
 {
 	if ((TouchItem.bIsPressed == true) && (TouchItem.FingerIndex == FingerIndex))
 	{
@@ -241,7 +241,7 @@ void AFPSCharacter::TouchUpdate(const ETouchIndex::Type FingerIndex, const FVect
 	}
 }
 
-void AFPSCharacter::MoveForward(float Value)
+void AFirstPersonCharacter::MoveForward(float Value)
 {
 	if (Value != 0.0f)
 	{
@@ -250,7 +250,7 @@ void AFPSCharacter::MoveForward(float Value)
 	}
 }
 
-void AFPSCharacter::MoveRight(float Value)
+void AFirstPersonCharacter::MoveRight(float Value)
 {
 	if (Value != 0.0f)
 	{
@@ -259,27 +259,27 @@ void AFPSCharacter::MoveRight(float Value)
 	}
 }
 
-void AFPSCharacter::TurnAtRate(float Rate)
+void AFirstPersonCharacter::TurnAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
 
-void AFPSCharacter::LookUpAtRate(float Rate)
+void AFirstPersonCharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
-bool AFPSCharacter::EnableTouchscreenMovement(class UInputComponent* PlayerInputComponent)
+bool AFirstPersonCharacter::EnableTouchscreenMovement(class UInputComponent* PlayerInputComponent)
 {
 	bool bResult = false;
 	if (FPlatformMisc::GetUseVirtualJoysticks() || GetDefault<UInputSettings>()->bUseMouseForTouch)
 	{
 		bResult = true;
-		PlayerInputComponent->BindTouch(EInputEvent::IE_Pressed, this, &AFPSCharacter::BeginTouch);
-		PlayerInputComponent->BindTouch(EInputEvent::IE_Released, this, &AFPSCharacter::EndTouch);
-		PlayerInputComponent->BindTouch(EInputEvent::IE_Repeat, this, &AFPSCharacter::TouchUpdate);
+		PlayerInputComponent->BindTouch(EInputEvent::IE_Pressed, this, &AFirstPersonCharacter::BeginTouch);
+		PlayerInputComponent->BindTouch(EInputEvent::IE_Released, this, &AFirstPersonCharacter::EndTouch);
+		PlayerInputComponent->BindTouch(EInputEvent::IE_Repeat, this, &AFirstPersonCharacter::TouchUpdate);
 	}
 	return bResult;
 }
